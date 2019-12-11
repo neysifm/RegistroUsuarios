@@ -16,7 +16,6 @@ namespace BLL
         // CONSTRUCTOR
         public RepositorioBase()
         {
-            contexto = new Contexto();
         }
 
         // METODO GUARDAR
@@ -25,12 +24,17 @@ namespace BLL
             bool Paso = false;
             try
             {
+                contexto = new Contexto();
                 if (contexto.Set<T>().Add(entity) != null)
                     Paso = contexto.SaveChanges() > 0;
             }
             catch (Exception)
             {
                 throw;
+            }
+            finally
+            {
+                contexto.Dispose();
             }
             return Paso;
         }
@@ -39,14 +43,19 @@ namespace BLL
         public virtual bool Modificar(T entity)
         {
             bool Paso = false;
+            contexto = new Contexto();
             try
             {
                 contexto.Entry(entity).State = EntityState.Modified;
-                Paso = contexto.SaveChanges() > 0;
+                Paso = (contexto.SaveChanges() > 0);
             }
             catch (Exception)
             {
                 throw;
+            }
+            finally
+            {
+                contexto.Dispose();
             }
             return Paso;
         }
@@ -55,6 +64,7 @@ namespace BLL
         public virtual T Buscar(int id)
         {
             T entity;
+            contexto = new Contexto();
             try
             {
                 entity = contexto.Set<T>().Find(id);
@@ -63,20 +73,29 @@ namespace BLL
             {
                 throw;
             }
+            finally
+            {
+                contexto.Dispose();
+            }
             return entity;
         }
 
         // LISTAR
-        public List<T> GetList(Expression<Func<T, bool>> expression)
+        public virtual List<T> GetList(Expression<Func<T, bool>> expression)
         {
-            List<T> lista;
+            List<T> lista = new List<T>();
+            contexto = new Contexto();
             try
             {
-                lista = contexto.Set<T>().Where(expression).ToList();
+                lista = contexto.Set<T>().AsNoTracking().Where(expression).ToList();
             }
             catch (Exception)
             {
                 throw;
+            }
+            finally
+            {
+                contexto.Dispose();
             }
             return lista;
         }
@@ -85,22 +104,27 @@ namespace BLL
         public virtual bool Eliminar(int id)
         {
             bool Paso = false;
+            contexto = new Contexto();
             T entity;
             try
             {
                 entity = contexto.Set<T>().Find(id);
-                contexto.Entry(entity).State = EntityState.Deleted;
+                contexto.Set<T>().Remove(entity);
                 Paso = contexto.SaveChanges() > 0;
             }
             catch (Exception)
             {
                 throw;
             }
+            finally
+            {
+                contexto.Dispose();
+            }
             return Paso;
         }
         public void Dispose()
         {
-            contexto.Dispose();
+            // contexto.Dispose();
         }
     }
 }

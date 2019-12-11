@@ -7,31 +7,29 @@ using System.Threading.Tasks;
 
 namespace Entidades
 {
-    public class Usuarios
+    [Serializable]
+    public class Usuario
     {
         [Key]
-        public int UsuarioId { get; set; }
-        public String Nombre { get; set; }
-        public String Clave { get; set; }
-        public DateTime Fecha { get; set; }
-        public String NivelUsuario { get; set; }
+        public int UsuarioID { get; set; }
+        public string Nombre { get; set; }
+        public string Email { get; set; }
+        public string Clave { get; set; }
 
-        public Usuarios(int usuarioId, string nombre, string clave, DateTime fecha, string nivelUsuario)
+        public Usuario(int usuarioID, string nombre, string email, string clave)
         {
-            UsuarioId = usuarioId;
+            UsuarioID = usuarioID;
             Nombre = nombre;
+            Email = email;
             Clave = clave;
-            Fecha = fecha;
-            NivelUsuario = nivelUsuario;
         }
 
-        public Usuarios()
+        public Usuario()
         {
-            UsuarioId = 0;
+            UsuarioID = 0;
             Nombre = String.Empty;
+            Email = String.Empty;
             Clave = String.Empty;
-            Fecha = DateTime.Now;
-            NivelUsuario = String.Empty;
         }
     }
 }
